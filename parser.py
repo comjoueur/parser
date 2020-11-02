@@ -237,8 +237,9 @@ class Parser:
         self.table = table
         self.initial_state = initial_state
 
-    def _parse(self, non_terminal, idx, tokens, answer):
-        answer += '{}: ['.format(non_terminal)
+    def _parse(self, non_terminal, idx, tokens, answer, depth=0):
+        answer += '  ' * depth
+        answer += '{}: [\n'.format(non_terminal)
         dict = self.table.get(non_terminal, None)
         if dict is None:
             return -1, answer
@@ -249,20 +250,25 @@ class Parser:
             if term == '':
                 continue
             if term == self.epsilon:
-                answer += '{}, '.format(term)
+                answer += '  ' * (depth + 1)
+                answer += term
+                answer += '\n'
                 continue
             is_terminal = self.terminal.get(term, False)
             if not is_terminal:
-                idx, answer = self._parse(term, idx, tokens, answer)
+                idx, answer = self._parse(term, idx, tokens, answer, depth + 1)
                 if idx == -1:
                     return -1, answer
             else:
                 if tokens[idx].type == term:
-                    answer += str(tokens[idx]) + ' '
+                    answer += '  ' * (depth + 1)
+                    answer += str(tokens[idx])
+                    answer += '\n'
                     idx += 1
                 else:
                     return -1, answer
-        answer += '] '
+        answer += '  ' * depth
+        answer += ']\n'
         return idx, answer
 
     def parse(self, tokens):
@@ -270,6 +276,8 @@ class Parser:
         size, answer = self._parse(self.initial_state, 0, tokens, answer)
         if size != len(tokens):
             answer = self.error_message
+            return answer
+        answer += '\nAll is ok!\n'
         return answer
 
 
