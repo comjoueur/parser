@@ -1,0 +1,74 @@
+S ::= goal $
+goal ::= statement p_goal
+p_goal ::= statement p_goal
+p_goal ::= lambda
+
+statement ::= declaration endline
+statement ::= operation endline
+statement ::= while_bucle
+statement ::= for_bucle
+statement ::= conditional
+
+while_bucle ::= while ( comparison ) { p_goal }
+
+for_bucle ::= for ( for_bucle_p endline comparison endline operation ) { p_goal }
+for_bucle_p ::= declaration for_bucle_p_p
+for_bucle_p_p ::= = operation
+for_bucle_p ::= operation
+
+conditional ::= if ( comparison ) { p_goal }
+
+comparison ::= operation comparison_op operation comparison_p
+comparison_p ::= && operation comparison_p
+comparison_p ::= || operation comparison_p
+comparison_p ::= lambda
+
+comparison_op ::= !=
+comparison_op ::= ==
+comparison_op ::= <
+comparison_op ::= >
+comparison_op ::= <=
+comparison_op ::= >=
+
+declaration ::= type name
+
+operation ::= (  operation_operator_p ) operation_right
+operation_operator_p ::= operation
+operation_right ::= operator operation
+operation_right ::= lambda
+
+operation ::= name operation_assign
+operation_assign ::= = operation
+operation_assign ::= + operation
+operation_assign ::= - operation
+operation_assign ::= * operation
+operation_assign ::= / operation
+operation_assign ::= ( parameters ) operation_assign
+operation_assign ::=  . name ( parameters ) operation_assign
+operation_assign ::= lambda
+
+parameters ::= operation parameters_p
+parameters ::= lambda
+parameters_p ::= , operation parameters_p
+parameters_p ::= lambda
+
+operation ::= number operation_number_p
+operation_number_p ::= number_op operation
+operation_number_p ::= lambda
+number_op ::= +
+number_op ::= -
+number_op ::= *
+number_op ::= /
+
+operation ::= string operation_string_p
+operation_string_p ::= string_op operation
+operation_string_p ::= lambda
+string_op ::= +
+
+operator ::= +
+operator ::= -
+operator ::= *
+operator ::= /
+
+endline ::= ;
+
